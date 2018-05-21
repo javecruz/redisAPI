@@ -1,81 +1,18 @@
 from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
 from datetime import datetime
-import redis
 import json
+from models.dbFlaskLink import db
+from models.cliente import Cliente
+from models.fichero import Fichero
+from models.vehiculo import Vehiculo
+# redis connection
+from redisApp import r
 
 app = Flask(__name__)
-#CORS(app, resources={r"/*/":{"origins":"*"}})
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/empresa'
 
-#redis connection, server should be running on background
-#tal como viene por defecto, si hago un set a algo que ya existe, se chafa, se puede evitar cambiando configuración o con r.exists('foo')
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
-
-
-db = SQLAlchemy(app)
-
-
-#TOFIX, models move another directory, circular dependency between db <--> app
-
-#model Ficheero
-class Fichero(db.Model): 
-    __tablename__ = 'ficheros'
-
-    id = db.Column('id', db.Integer, primary_key = True)
-    nombre = db.Column('nombre', db.VARCHAR)
-    tipo = db.Column('tipo', db.VARCHAR)
-    id_Vehiculo =  db.Column('id_Vehiculo', db.Integer)
-
-    def __init__(self, nombre, tipo, id_Vehiculo):
-        self.nombre = nombre
-        self.tipo = tipo
-        self.id_Vehiculo = id_Vehiculo
-
-#model cliente
-class Cliente(db.Model):
-    __tablename__ = 'cliente'
-
-    id = db.Column('id', db.SMALLINT, primary_key=True)
-    nombres = db.Column('nombres', db.VARCHAR)
-    ciudad = db.Column('ciudad',db.VARCHAR)
-    sexo = db.Column('sexo', db.CHAR)
-    telefono = db.Column('telefono', db.VARCHAR)
-    fecha_nacimiento = db.Column('fecha_nacimiento', db.DateTime)
-    direccion = db.Column('direccion', db.VARCHAR)
-    provincia = db.Column('provincia', db.VARCHAR)
-    fechaAlta = db.Column('fechaAlta', db.DateTime)
-
-    def __init__(self, nombres, ciudad, sexo, telefono, fecha_nacimiento, direccion, provincia):
-        self.nombres = nombres
-        self.ciudad = ciudad
-        self.sexo = sexo
-        self.telefono = telefono
-        self.fecha_nacimiento = fecha_nacimiento
-        self.direccion = direccion
-        self.provincia = provincia
-
-#model vehiculos
-class Vehiculo(db.Model):
-    __tablename__ = 'vehiculos'
-
-    id = db.Column('id', db.Integer, primary_key = True)
-    matricula = db.Column('matricula', db.VARCHAR)
-    fecha_fabricacion = db.Column('fecha_fabricacion', db.DateTime)
-    marca = db.Column('marca', db.VARCHAR)
-    modelo = db.Column('modelo', db.VARCHAR)
-    id_cliente = db.Column('id_cliente', db.SMALLINT)
-    Tipo = db.Column('Tipo', db.SMALLINT)
-
-    def __init__(self, matricula, fecha, marca, modelo, id_cliente, tipo):
-        self.matricula = matricula
-        self.fecha_fabricacion = fecha
-        self.marca = marca
-        self.modelo = modelo
-        self.id_cliente = id_cliente
-        self.Tipo = tipo
-
+# inicio db con la app de flask asi la tienen los modelos
+db.init_app(app)
 
 @app.route('/', methods=['GET'])
 def test():
@@ -85,7 +22,7 @@ def test():
 @app.route('/clientes', methods=['GET'])
 def getAllClientes():
     #aqui redis hay un problema, redis guarda por key:value, si guardo todos los valores luego como sé hasta que valor deberia recorrer con redis?... tendria que guardar la id maxima
-    # lo que voy hacer es, si se hago un get a todos los recursos de un tipo, copiar todos los recursos a redis y si luego se hace request a recursos unicos ya los tengo, problema? si hago peticiones a todos
+    # lo que voy hacer es, si se hace un get a todos los recursos de un tipo, copiar todos los recursos a redis y si luego se hace request a recursos unicos ya los tengo, problema? si hago peticiones un getAllClientes una y otra vez, estare sobreescribiendo datos que ya existen y que quiza sea identicos
     data = Cliente.query.all()
     arrayData = []
     for i in data:
