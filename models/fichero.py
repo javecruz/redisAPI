@@ -1,4 +1,4 @@
-from dbFlaskLink import db
+from .dbFlaskLink import db
 
 class Fichero(db.Model):
     __tablename__ = 'ficheros'
