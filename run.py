@@ -5,11 +5,13 @@ from models.dbFlaskLink import db
 from models.cliente import Cliente
 from models.fichero import Fichero
 from models.vehiculo import Vehiculo
+#all config info such db
+import config
 # redis connection
 from redisApp import r
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/empresa'
+app.config[config.key] = config.url
 
 # inicio db con la app de flask asi la tienen los modelos
 db.init_app(app)
