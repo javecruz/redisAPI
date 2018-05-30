@@ -3,16 +3,14 @@ MUST
 	pip
 	mysql-server
 	redis-server
-	cli-redis
 RECOMENDED
 	mysql** (esto es solo el prompt)
 	curl**
 	redis-cli**
-
 USADOS
 	terminator
 	git
 	virtualenv
 	vim
 	google-chrome
-	postman
+	postman**
