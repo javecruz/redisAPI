@@ -1,0 +1,8 @@
+Para que funcione la API, se necesita tener activo el servidor de redis, en linux hay que instalarlo:
+	sudo apt-get install redis-server
+y una vez instalado, ejecutarlo con
+	sudo service redis-server start
+
+
+Se recomienda usar redis-cli en linux para poder interactuar con redis desde la consola.
+
