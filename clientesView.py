@@ -23,10 +23,8 @@ def getAllClientes():
 @bp_clientes.route('/cliente/<int:id>', methods = ['GET'])
 def getOneClient(id):
     if r.exists('cliente:{}'.format(id)):
-        print('redisssss')
         return r.get('cliente:{}'.format(id))
     else:
-        print('data baseeeee')
         data = Cliente.query.filter_by(id=id)
         arrayData = []
         arrayData.append({'id':data[0].id,'nombres':data[0].nombres,'ciudad':data[0].ciudad,'sexo':data[0].sexo,'telefono':data[0].telefono,'fecha_nacimiento':data[0].fecha_nacimiento.strftime("%Y-%m-%d %H:%M:%S"),'direccion':data[0].direccion,'provincia':data[0].provincia,'fechaAlta':data[0].fechaAlta.strftime("%Y-%m-%d %H:%M:%S")})

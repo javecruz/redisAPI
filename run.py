@@ -25,7 +25,7 @@ db.init_app(app)
 
 @app.route('/', methods=['GET'])
 def test():
-    return jsonify({'info' : 'API REST - VELANDO CRUZ, JAVIER','Curso':'DAW IES CONSELLERIA 2016-2017'})
+    return jsonify({'info' : 'API REST - VELANDO CRUZ, JAVIER','Curso':'DAW IES CONSELLERIA 2017-2018'})
 
 #si este script se ha ejecutado de forma directa(es decir, no se ha importado) __name__ sera igual a __main__
 if __name__ == '__main__':
